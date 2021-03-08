@@ -8,12 +8,15 @@ import matplotlib.pyplot as plt
 from utils import load_metrics, load_checkpoint
 from evaluate import evaluate
 
-def LMCL(y_true, y_pred, scale=30, margin=0.35):
-    y_pred = y_true * (y_pred - margin) + (1 - y_true) * y_pred
-    y_pred *= scale
-    loss_function = nn.CrossEntropyLoss()
-    return loss_function(y_pred, y_true)
+class LMCL(torch.nn.Module):
+    def __init__(self):
+        super(LMCL, self).__init__()
+        self.loss = nn.CrossEntropyLoss()
 
+    def forward(self, output, target, scale=30, margin=0.35):
+        output = target * (output - margin) + (1 - target) * output
+        output *= scale
+        return self.loss(output, target)
 
 des_folder = 'record'
 num_epochs = 10
