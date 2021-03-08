@@ -36,12 +36,19 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
 
     test_features = np.vstack(test_features)
     train_features = np.vstack(train_features)
+    print("test_features:")
+    print(test_features)
+    print("train_features")
+    print(train_features)
     y_pred = np.array(y_pred)
     y_true = np.array(y_true)
-
+    print('y_pred:')
+    print(y_pred)
+    print('y_true:')
+    print(y_true)
     # The report of the classification task
-    print('Classification Report:')
-    print(classification_report(y_true, y_pred, labels=[1,0], digits=4))
+    #print('Classification Report:')
+    #print(classification_report(y_true, y_pred, labels=[1,0], digits=4))
 
     # LOF
     print('LOF training...')
@@ -50,7 +57,8 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
     y_pred_lof = lof.predict(test_features)
     y_pred[y_pred_lof==-1] = 2
     print('LOF finished...')
-
+    print('y_pred:')
+    print(y_pred)
     cm = confusion_matrix(y_true, y_pred, labels=[2,1,0])
     ax= plt.subplot()
     sns.heatmap(cm, annot=True, ax = ax, cmap='Blues', fmt="d")

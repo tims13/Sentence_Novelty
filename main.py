@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
 from utils import load_metrics, load_checkpoint
 from evaluate import evaluate
 
+def LMCL(y_true, y_pred, scale=30, margin=0.35):
+    y_pred = y_true * (y_pred - margin) + (1 - y_true) * y_pred
+    y_pred *= scale
+    loss_function = nn.CrossEntropyLoss()
+    return loss_function(y_pred, y_true)
+
+
 des_folder = 'record'
 num_epochs = 10
 
@@ -24,7 +31,8 @@ print("start training...")
 train(
     model=model,
     optimizer=optimizer,
-    criterion=nn.BCELoss(),
+    #criterion=nn.BCELoss(),
+    criterion=LMCL,
     train_loader=train_iter,
     valid_loader=valid_iter,
     num_epochs=num_epochs,
