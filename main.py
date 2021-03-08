@@ -5,10 +5,8 @@ from model import BiLSTM
 from data_loader import load_data
 from train import train
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import seaborn as sns
 from utils import load_metrics, load_checkpoint
-from evaluate import evaluate, evaluate_novelty
+from evaluate import evaluate
 
 des_folder = 'record/'
 num_epochs = 10
