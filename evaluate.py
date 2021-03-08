@@ -36,6 +36,8 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
 
     test_features = np.vstack(test_features)
     train_features = np.vstack(train_features)
+    y_pred = np.array(y_pred)
+    y_true = np.array(y_true)
 
     # The report of the classification task
     print('Classification Report:')
