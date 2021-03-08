@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from utils import load_metrics, load_checkpoint
 from evaluate import evaluate
 
-des_folder = 'record/'
+des_folder = 'record'
 num_epochs = 10
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
