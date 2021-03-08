@@ -25,6 +25,8 @@ class BiLSTM(nn.Module):
         out_reverse = output[:, 0, self.dimension:]
         out_combine = torch.cat((out_forward, out_reverse), 1)
         text_features = self.drop(out_combine)
+        # get the deep features
+        self.deep_features = text_features.detach()
         text_features = torch.squeeze(self.fc(text_features), 1)
         text_output = torch.sigmoid(text_features)
         return text_output

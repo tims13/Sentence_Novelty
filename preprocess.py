@@ -1,3 +1,4 @@
+from operator import index
 import os
 import numpy as np
 import pandas as pd
@@ -11,7 +12,7 @@ data_neg_csv_path = des_path + 'data_neg.csv'
 data_irre_csv_path = des_path + 'data_irre.csv'
 data_novel_csv_path = des_path + 'data_novel.csv'
 
-train_test_ratio = 0.90
+train_test_ratio = 0.80
 train_valid_ratio = 0.80
 
 data_paths = [
@@ -47,6 +48,12 @@ data_neg['label'] = 0
 data_neg.rename(columns={'neg': 'text'}, inplace=True)
 data_neg['text'] = data_neg['text'].apply(trim_string)
 
+# preprocess unknow intent / novelty
+data_novel = pd.read_csv(data_novel_csv_path)
+data_novel['label'] = 2
+data_novel.rename(columns={'novel': 'text'}, inplace=True)
+data_novel['text'] = data_novel['text'].apply(trim_string)
+
 # Train - Test
 df_pos_full_train, df_pos_test = train_test_split(data_pos, train_size = train_test_ratio, random_state=1)
 df_neg_full_train, df_neg_test = train_test_split(data_neg, train_size = train_test_ratio, random_state=1)
@@ -60,7 +67,8 @@ print("neg:", df_neg_train.shape, df_neg_valid.shape, df_neg_test.shape)
 
 df_train = pd.concat([df_pos_train, df_neg_train], ignore_index=True, sort=False)
 df_valid = pd.concat([df_pos_valid, df_neg_valid], ignore_index=True, sort=False)
-df_test = pd.concat([df_pos_test, df_neg_test], ignore_index=True, sort=False)
+# df_test includes novel data :)
+df_test = pd.concat([df_pos_test, df_neg_test, data_novel], ignore_index=True, sort=False)
 
 df_train.to_csv(des_path + 'train.csv', index=False)
 df_valid.to_csv(des_path + 'valid.csv', index=False)

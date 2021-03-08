@@ -47,4 +47,4 @@ plt.cla()
 # evaluate
 best_model = BiLSTM(vocab=vocab).to(device)
 load_checkpoint(des_folder + '/model.pt', best_model, device)
-evaluate(best_model, test_iter, device, des_folder)
+evaluate(best_model, train_iter, test_iter, device, des_folder)

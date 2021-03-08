@@ -17,12 +17,11 @@ def load_data(device, source_folder = 'data'):
                                             test='test.csv', format='CSV', fields=fields, skip_header=True)
 
     # Iterators
-
     train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.text),
                                 device=device, train=True, sort=True, sort_within_batch=True)
     valid_iter = BucketIterator(valid, batch_size=16, sort_key=lambda x: len(x.text),
                                 device=device, train=True, sort=True, sort_within_batch=True)
     test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
-
+    # Vocabulary
     text_field.build_vocab(train, min_freq = 3)
     return train_iter, valid_iter, test_iter, text_field.vocab
