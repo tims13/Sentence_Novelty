@@ -42,10 +42,12 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
     print(classification_report(y_true, y_pred, labels=[1,0], digits=4))
 
     # LOF
+    print('LOF training...')
     lof = LocalOutlierFactor(n_neighbors=20, contamination=0.05, novelty=True, n_jobs=-1)
     lof.fit(train_features)
-    y_pred_lof = pd.Series(lof.predict(test_features))
-    y_pred[y_pred_lof[y_pred_lof==-1].index] = 2
+    y_pred_lof = lof.predict(test_features)
+    y_pred[y_pred_lof==-1] = 2
+    print('LOF finished...')
 
     cm = confusion_matrix(y_true, y_pred, labels=[2,1,0])
     ax= plt.subplot()
