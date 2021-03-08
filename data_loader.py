@@ -25,4 +25,4 @@ def load_data(device, source_folder = 'data'):
     test_iter = Iterator(test, batch_size=16, device=device, train=False, shuffle=False, sort=False)
 
     text_field.build_vocab(train, min_freq = 3)
-    return train_iter, valid_iter, test_iter
+    return train_iter, valid_iter, test_iter, text_field.vocab
