@@ -1,3 +1,4 @@
+from scipy.sparse.dia import dia_matrix
 import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
@@ -29,6 +30,6 @@ class BiLSTM(nn.Module):
         # get the deep features
         self.deep_features = text_features.detach()
         # obtain output
-        text_output = torch.softmax(self.fc(text_features))
+        text_output = torch.softmax(self.fc(text_features), dim=1)
         return text_output
 
