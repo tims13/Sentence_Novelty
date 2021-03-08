@@ -33,4 +33,4 @@ def evaluate(model, test_loader,device, des_folder, threshold=0.5):
 
     ax.xaxis.set_ticklabels(['POSITIVE', 'NEGATIVE'])
     ax.yaxis.set_ticklabels(['POSITIVE', 'NEGATIVE'])
-    plt.savefig(des_folder + 'eval.png')
+    plt.savefig(des_folder + '/eval.png')

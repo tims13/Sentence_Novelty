@@ -41,7 +41,7 @@ plt.plot(global_steps_list, valid_loss_list, label='Valid')
 plt.xlabel('Global Steps')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig(des_folder + 'train_iter.png')
+plt.savefig(des_folder + '/train_iter.png')
 plt.cla()
 
 # evaluate
