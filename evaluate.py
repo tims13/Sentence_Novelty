@@ -60,6 +60,6 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
     ax.set_xlabel('Predicted Labels')
     ax.set_ylabel('True Labels')
 
-    ax.xaxis.set_ticklabels(['POSITIVE', 'NEGATIVE'])
-    ax.yaxis.set_ticklabels(['POSITIVE', 'NEGATIVE'])
+    ax.xaxis.set_ticklabels(['NOVEL', 'POSITIVE', 'NEGATIVE'])
+    ax.yaxis.set_ticklabels(['NOVEL', 'POSITIVE', 'NEGATIVE'])
     plt.savefig(des_folder + '/eval.png')
