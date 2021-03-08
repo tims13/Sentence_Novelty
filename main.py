@@ -24,7 +24,7 @@ print("start training...")
 train(
     model=model,
     optimizer=optimizer,
-    criterion=nn.BCELoss,
+    criterion=nn.BCELoss(),
     train_loader=train_iter,
     valid_loader=valid_iter,
     num_epochs=num_epochs,
