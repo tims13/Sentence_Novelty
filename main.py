@@ -14,7 +14,9 @@ class LMCL(torch.nn.Module):
         self.loss = nn.CrossEntropyLoss()
 
     def forward(self, output, target, scale=30, margin=0.35):
-        output = target * (output - margin) + (1 - target) * output
+        target_ont_hot = torch.zeros_like(output)
+        target_ont_hot.scatter_(1, target.view(-1, 1).type(torch.LongTensor), 1.0)
+        output = target_ont_hot * (output - margin) + (1 - target_ont_hot) * output
         output *= scale
         return self.loss(output, target)
 

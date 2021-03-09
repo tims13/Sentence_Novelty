@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from torch._C import dtype
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -30,11 +31,13 @@ def train(model,
     for epoch in range(num_epochs):
         print("start epoch:" + str(epoch))
         for ((text, text_len), labels), _ in train_loader:          
-            labels = labels.to(device)
+            labels = labels.to(device, dtype=torch.int64)
             text = text.to(device)
             text_len = text_len.to(device)
             output = model(text, text_len)
-
+            # output,_ = torch.max(output, 1)
+            print("output.size:" + str(output.size()))
+            print("label.size:" + str(labels.size()))
             loss = criterion(output, labels)
             optimizer.zero_grad()
             loss.backward()
@@ -50,7 +53,7 @@ def train(model,
                 with torch.no_grad():                    
                     # validation loop
                     for ((text, text_len), labels), _ in valid_loader:       
-                        labels = labels.to(device)
+                        labels = labels.to(device, dtype=torch.int64)
                         text = text.to(device)
                         text_len = text_len.to(device)
                         output = model(text, text_len)
