@@ -49,7 +49,7 @@ def evaluate(model, train_loader, test_loader,device, des_folder, threshold=0.5)
     print(y_true)
     # The report of the classification task
     print('Classification Report:')
-    print(classification_report(y_true, y_pred, labels=[1,0], digits=4))
+    print(classification_report(y_true[:sum(y_true!=2)], y_pred[:sum(y_true!=2)], labels=[1,0], digits=4))
 
     # LOF
     print('LOF training...')
