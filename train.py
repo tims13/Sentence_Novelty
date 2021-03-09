@@ -38,7 +38,7 @@ def train(model,
             # output,_ = torch.max(output, 1)
             print("output.size:" + str(output.size()))
             print("label.size:" + str(labels.size()))
-            loss = criterion(output, labels)
+            loss = criterion(output, labels, device)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -57,7 +57,7 @@ def train(model,
                         text = text.to(device)
                         text_len = text_len.to(device)
                         output = model(text, text_len)
-                        loss = criterion(output, labels)
+                        loss = criterion(output, labels, device)
                         valid_running_loss += loss.item()
 
                 # evaluation

@@ -1,5 +1,6 @@
 import torch
 from torch import optim
+from torch._C import dtype, int64
 import torch.nn as nn
 from model import BiLSTM
 from data_loader import load_data
@@ -13,9 +14,10 @@ class LMCL(torch.nn.Module):
         super(LMCL, self).__init__()
         self.loss = nn.CrossEntropyLoss()
 
-    def forward(self, output, target, scale=30, margin=0.35):
+    def forward(self, output, target, device, scale=30, margin=0.35):
         target_ont_hot = torch.zeros_like(output)
-        target_ont_hot.scatter_(1, target.view(-1, 1).type(torch.LongTensor), 1.0)
+        index = target.view(-1, 1).to(device, dtype=int64)
+        target_ont_hot.scatter_(1, index, 1.0)
         output = target_ont_hot * (output - margin) + (1 - target_ont_hot) * output
         output *= scale
         return self.loss(output, target)
