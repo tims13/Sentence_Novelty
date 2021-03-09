@@ -1,6 +1,5 @@
 import torch
 from torch import optim
-from torch._C import dtype, int64
 import torch.nn as nn
 from model import BiLSTM
 from data_loader import load_data
