@@ -3,8 +3,10 @@ import torch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.neighbors import LocalOutlierFactor
+from sklearn.ensemble import IsolationForest
+from sklearn.svm import OneClassSVM
 import seaborn as sns
 
 def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder, threshold=0.5):
@@ -68,7 +70,7 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     ax.yaxis.set_ticklabels(['POSITIVE', 'NEGATIVE'])
     plt.savefig(des_folder + '/eval.png')
 
-    # LOF
+    # novel detect, fetch as many as possible
     print('LOF training...')
     lof = LocalOutlierFactor(n_neighbors=20, contamination=0.5, novelty=True, n_jobs=-1)
     lof.fit(train_features)
@@ -76,4 +78,20 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     lof_recall = sum(y_pred_lof == -1) / len(y_pred_lof)
     print('LOF RECALL:')
     print(lof_recall)
+
+    print('Isolation Forest training...')
+    isolation_forest = IsolationForest(random_state=0, contamination=0.5, n_jobs=-1)
+    isolation_forest.fit(train_features)
+    y_pred_iso = isolation_forest.predict(novel_features)
+    iso_recall = sum(y_pred_iso == -1) / len(y_pred_iso)
+    print('ISOLATION FOREST RECALL:')
+    print(iso_recall)
+
+    print('OC-SVM training...')
+    oc_svm = OneClassSVM(gamma='auto')
+    oc_svm.fit(train_features)
+    y_pred_oc = oc_svm.predict(novel_features)
+    oc_recall = sum(y_pred_oc == -1) / len(y_pred_oc)
+    print('OC-SVM RECALL:')
+    print(oc_recall)
     
