@@ -67,11 +67,11 @@ print("neg:", df_neg_train.shape, df_neg_valid.shape, df_neg_test.shape)
 
 df_train = pd.concat([df_pos_train, df_neg_train], ignore_index=True, sort=False)
 df_valid = pd.concat([df_pos_valid, df_neg_valid], ignore_index=True, sort=False)
-# df_test includes novel data :)
-df_test = pd.concat([df_pos_test, df_neg_test, data_novel], ignore_index=True, sort=False)
+df_test = pd.concat([df_pos_test, df_neg_test], ignore_index=True, sort=False)
 
 df_train.to_csv(des_path + 'train.csv', index=False)
 df_valid.to_csv(des_path + 'valid.csv', index=False)
 df_test.to_csv(des_path + 'test.csv', index=False)
+data_novel.to_csv(des_path + 'novel.csv', index=False)
 
 print("Preprocess finished")
