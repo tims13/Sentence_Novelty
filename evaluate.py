@@ -8,6 +8,7 @@ from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM
 import seaborn as sns
+from torch._C import dtype
 
 def evaluate_novel(model, train_features, test_features, y_true, name):
     model.fit(train_features)
@@ -79,7 +80,7 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     novel_test_features = np.vstack((test_features, novel_features))
     y_true.extend(y_novel)
     # 0 for not novel, 1 for novel
-    y_true = [int(x) for x in y_true]
+    y_true = np.array(y_true, dtype=int)
     y_true[y_true != 2] = 0
     y_true[y_true == 2] = 1
     # novel detect, fetch as many as possible
