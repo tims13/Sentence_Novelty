@@ -31,14 +31,14 @@ def train(model,
     for epoch in range(num_epochs):
         print("start epoch:" + str(epoch))
         for ((text, text_len), labels), _ in train_loader:          
-            labels = labels.to(device, dtype=torch.int64)
+            labels = labels.to(device)
             text = text.to(device)
             text_len = text_len.to(device)
             output = model(text, text_len)
             # output,_ = torch.max(output, 1)
             # print("output.size:" + str(output.size()))
             # print("label.size:" + str(labels.size()))
-            loss = criterion(output, labels, device)
+            loss = criterion(output, labels)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -53,11 +53,11 @@ def train(model,
                 with torch.no_grad():                    
                     # validation loop
                     for ((text, text_len), labels), _ in valid_loader:       
-                        labels = labels.to(device, dtype=torch.int64)
+                        labels = labels.to(device)
                         text = text.to(device)
                         text_len = text_len.to(device)
                         output = model(text, text_len)
-                        loss = criterion(output, labels, device)
+                        loss = criterion(output, labels)
                         valid_running_loss += loss.item()
 
                 # evaluation

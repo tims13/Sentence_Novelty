@@ -37,8 +37,8 @@ print("start training...")
 train(
     model=model,
     optimizer=optimizer,
-    #criterion=nn.BCELoss(),
-    criterion=LMCL(),
+    criterion=nn.BCELoss(),
+    # criterion=LMCL(),
     train_loader=train_iter,
     valid_loader=valid_iter,
     num_epochs=num_epochs,

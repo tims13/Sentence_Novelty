@@ -15,7 +15,7 @@ class BiLSTM(nn.Module):
                             batch_first=True,
                             bidirectional=True)
         self.drop = nn.Dropout(p=0.5)
-        self.fc = nn.Linear(2*dimension, output_dim)
+        self.fc = nn.Linear(2*dimension, 1)
 
     def forward(self, text, text_len):
         text_emb = self.embedding(text)
@@ -30,6 +30,7 @@ class BiLSTM(nn.Module):
         # get the deep features
         self.deep_features = text_features.detach()
         # obtain output
-        text_output = torch.softmax(self.fc(text_features), dim=1)
+        text_features = torch.squeeze(self.fc(text_features), 1)
+        text_output = torch.sigmoid(text_features)
         return text_output
 
