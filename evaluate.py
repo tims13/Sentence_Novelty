@@ -3,20 +3,31 @@ import torch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, recall_score, precision_score
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM
 import seaborn as sns
+from torch._C import dtype
+
+def evaluate_novel(model, train_features, test_features, y_true, name):
+    model.fit(train_features)
+    y_pred = model.predict(test_features)
+    y_pred[y_pred != -1] = 0
+    y_pred[y_pred == -1] = 1
+    rec_score = recall_score(y_true, y_pred)
+    prec_score = precision_score(y_true, y_pred)
+    print(name + ' RECALL:' + str(rec_score))
+    print(name + ' PRECISION:' + str(prec_score))
 
 def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder, threshold=0.5):
     y_pred = []
     y_true = []
-
+    y_novel = []
     model.eval()
     train_features = []
     novel_features = []
-    # test_features = []
+    test_features = []
     with torch.no_grad():
         # on test set, predict
         for ((text, text_len), labels), _ in test_loader:      
@@ -24,7 +35,7 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
                 text = text.to(device)
                 text_len = text_len.to(device)
                 output = model(text, text_len)
-                # test_features.append(model.deep_features.cpu().numpy())
+                test_features.append(model.deep_features.cpu().numpy())
                 output = (output > threshold).int()
                 y_pred.extend(output.tolist())
                 y_true.extend(labels.tolist())
@@ -44,13 +55,16 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
                 text_len = text_len.to(device)
                 output = model(text, text_len)
                 novel_features.append(model.deep_features.cpu().numpy())
+                y_novel.extend(labels.tolist())
 
-    # test_features = np.vstack(test_features)
+    test_features = np.vstack(test_features)
     train_features = np.vstack(train_features)
     novel_features = np.vstack(novel_features)
     # compute the prediction
-    y_pred = np.array(y_pred)
-    y_pred = np.argmax(y_pred, axis=1)
+    y_pred = np.argmax(np.array(y_pred), axis=1)
+    y_true_with_novel = np.array(y_true.extend(y_novel), dtype=int)
+    y_true_with_novel[y_true_with_novel != 2] = 0
+    y_true_with_novel[y_true_with_novel == 2] = 1
     y_true = np.array(y_true)
     print('y_pred:')
     print(y_pred)
@@ -71,27 +85,15 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     plt.savefig(des_folder + '/eval.png')
 
     # novel detect, fetch as many as possible
+    novel_test_features = np.vstack((test_features, novel_features))
     print('LOF training...')
     lof = LocalOutlierFactor(n_neighbors=20, contamination=0.5, novelty=True, n_jobs=-1)
-    lof.fit(train_features)
-    y_pred_lof = lof.predict(novel_features)
-    lof_recall = sum(y_pred_lof == -1) / len(y_pred_lof)
-    print('LOF RECALL:')
-    print(lof_recall)
+    evaluate_novel(lof, train_features, novel_test_features, y_true_with_novel, 'LOF')
 
     print('Isolation Forest training...')
     isolation_forest = IsolationForest(random_state=0, contamination=0.5, n_jobs=-1)
-    isolation_forest.fit(train_features)
-    y_pred_iso = isolation_forest.predict(novel_features)
-    iso_recall = sum(y_pred_iso == -1) / len(y_pred_iso)
-    print('ISOLATION FOREST RECALL:')
-    print(iso_recall)
+    evaluate_novel(isolation_forest, train_features, novel_test_features, y_true_with_novel, 'ISO')
 
     print('OC-SVM training...')
     oc_svm = OneClassSVM(gamma='auto')
-    oc_svm.fit(train_features)
-    y_pred_oc = oc_svm.predict(novel_features)
-    oc_recall = sum(y_pred_oc == -1) / len(y_pred_oc)
-    print('OC-SVM RECALL:')
-    print(oc_recall)
-    
+    evaluate_novel(oc_svm, train_features, novel_test_features, y_true_with_novel, 'OC-SVM')

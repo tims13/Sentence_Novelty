@@ -13,7 +13,7 @@ class LMCL(torch.nn.Module):
         super(LMCL, self).__init__()
         self.loss = nn.CrossEntropyLoss()
 
-    def forward(self, output, target, device, scale=30, margin=0.40):
+    def forward(self, output, target, device, scale=30, margin=0.30):
         target_ont_hot = torch.zeros_like(output)
         index = target.view(-1, 1).to(device, dtype=torch.int64)
         target_ont_hot.scatter_(1, index, 1.0)
