@@ -14,9 +14,9 @@ def evaluate_novel(model, train_features, test_features, y_true, name):
     y_pred = model.predict(test_features)
     y_pred[y_pred != -1] = 0
     y_pred[y_pred == -1] = 1
-    recall_score = recall_score(y_true, y_pred)
+    rec_score = recall_score(y_true, y_pred)
     prec_score = precision_score(y_true, y_pred)
-    print(name + ' RECALL:' + str(recall_score))
+    print(name + ' RECALL:' + str(rec_score))
     print(name + ' PRECISION:' + str(prec_score))
 
 
