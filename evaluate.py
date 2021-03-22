@@ -58,7 +58,6 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
                 novel_features.append(model.deep_features.cpu().numpy())
                 y_novel.extend(labels.tolist())
 
-    novel_feature_num = len(novel_features)
     test_features = np.vstack(test_features)
     train_features = np.vstack(train_features)
     novel_features = np.vstack(novel_features)
@@ -80,6 +79,7 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     novel_test_features = np.vstack((test_features, novel_features))
     y_true.extend(y_novel)
     # 0 for not novel, 1 for novel
+    y_true = [int(x) for x in y_true]
     y_true[y_true != 2] = 0
     y_true[y_true == 2] = 1
     # novel detect, fetch as many as possible
