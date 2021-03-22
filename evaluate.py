@@ -62,9 +62,6 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
     novel_features = np.vstack(novel_features)
     # compute the prediction
     y_pred = np.argmax(np.array(y_pred), axis=1)
-    y_true_with_novel = np.array(y_true.extend(y_novel), dtype=int)
-    y_true_with_novel[y_true_with_novel != 2] = 0
-    y_true_with_novel[y_true_with_novel == 2] = 1
     y_true = np.array(y_true)
     print('y_pred:')
     print(y_pred)
@@ -86,6 +83,10 @@ def evaluate(model, train_loader, test_loader, novel_loader, device, des_folder,
 
     # novel detect, fetch as many as possible
     novel_test_features = np.vstack((test_features, novel_features))
+    y_true_with_novel = np.append(y_true, y_novel)
+    y_true_with_novel.astype(np.int)
+    y_true_with_novel[y_true_with_novel != 2] = 0
+    y_true_with_novel[y_true_with_novel == 2] = 1
     print('LOF training...')
     lof = LocalOutlierFactor(n_neighbors=20, contamination=0.5, novelty=True, n_jobs=-1)
     evaluate_novel(lof, train_features, novel_test_features, y_true_with_novel, 'LOF')
